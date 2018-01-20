@@ -51,6 +51,7 @@ class CoindbCommand extends CConsoleCommand
 		} elseif ($args[0] == 'icons') {
 
 			$nbUpdated  = $this->grabBterIcons();
+			$nbUpdated  = $this->grabBitzIcons();
 			$nbUpdated += $this->grabCcexIcons();
 			$nbUpdated += $this->grabCryptopiaIcons();
 			$nbUpdated += $this->grabBittrexIcons(); // can be huge ones
@@ -330,6 +331,41 @@ class CoindbCommand extends CConsoleCommand
 		return $nbUpdated;
 	}
 
+	/**
+	 * Icon grabber - bit-z.com
+	 */
+	public function grabBitzIcons()
+	{
+		$url = 'https://www.bit-z.com/images/coins/coin_';//coin_eth.png
+		$nbUpdated = 0;
+		$sql = "SELECT DISTINCT coins.id FROM coins INNER JOIN markets M ON M.coinid = coins.id ".
+			"WHERE M.name='bitz' AND IFNULL(coins.image,'') = ''";
+		$coins = dbolist($sql);
+		if (empty($coins))
+			return 0;
+		echo "bitz: try to download new icons...\n";
+		foreach ($coins as $coin) {
+			$coin = getdbo('db_coins', $coin["id"]);
+			$symbol = $coin->getOfficialSymbol();
+			$local = $this->basePath."/images/coin-{$symbol}.png";
+			try {
+				$data = @ file_get_contents($url.$symbol.'.png');
+			} catch (Exception $e) {
+				continue;
+			}
+			if (strlen($data) < 2048) continue;
+			echo $symbol." icon found\n";
+			file_put_contents($local, $data);
+			if (filesize($local) > 0) {
+				$coin->image = "/images/coin-{$symbol}.png";
+				$nbUpdated += $coin->save();
+			}
+		}
+		if ($nbUpdated)
+			echo "$nbUpdated icons downloaded from bitz\n";
+		return $nbUpdated;
+	}
+	
 	/**
 	 * Icon grabber - Bittrex
 	 */
