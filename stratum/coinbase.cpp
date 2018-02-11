@@ -214,7 +214,7 @@ void coinbase_create(YAAMP_COIND *coind, YAAMP_JOB_TEMPLATE *templ, json_value *
 	}
 
 	// most recent masternodes rpc (DASH, SIB, MUE, DSR, GBX...)
-	if(coind->hasmasternodes && !coind->oldmasternodes)
+	if((coind->hasmasternodes && !coind->oldmasternodes)||(strcmp(coind->symbol, "BCASH") == 0)||(strcmp(coind->symbol, "FXC") == 0)||(strcmp(coind->symbol, "SGPR") == 0)||(strcmp(coind->symbol, "VBD") == 0))
 	{
 		char script_dests[2048] = { 0 };
 		char script_payee[128] = { 0 };

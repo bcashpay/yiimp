@@ -2,6 +2,6 @@
 
 ALTER TABLE `coins` ADD `hasmasternodes` TINYINT(1) NOT NULL DEFAULT '0' AFTER `hassubmitblock`;
 
-UPDATE coins SET hasmasternodes=1 WHERE symbol IN ('DASH','BOD','CHC','MDT');
+UPDATE coins SET hasmasternodes=1 WHERE symbol IN ('DASH','BOD','CHC','MDT', 'BCASH', 'FXC', 'VBD', 'SGPR');
 
 ALTER TABLE `coins` ADD `serveruser` varchar(45) NULL AFTER `rpcpasswd`;
